@@ -4,20 +4,42 @@ import { AlurakutMenu, AlurakutProfileSidebarMenuDefault, OrkutNostalgicIconSet 
 import { ProfileRelationsBoxWrapper } from '../src/components/ProfileRelations';
 import React from 'react';
 
-function ProfileSidebar(propriedades) {
+function ProfileSidebar(properties) {
   return (
     <Box as="aside">
-      <img src={`https://github.com/${propriedades.githubUser}.png`} style={{ borderRadius: '8px' }} />
+      <img src={`https://github.com/${properties.githubUser}.png`} style={{ borderRadius: '8px' }} />
       <hr />
     <p>
-      <a className="boxLink" href={`https://github.com/${propriedades.githubUser}`}>
-        @{propriedades.githubUser}
+      <a className="boxLink" href={`https://github.com/${properties.githubUser}`}>
+        @{properties.githubUser}
       </a>
     </p>  
       <hr />
 
       <AlurakutProfileSidebarMenuDefault />
     </Box>
+  )
+}
+
+function ProfileRelationsBox(properties) {
+  return (
+  <ProfileRelationsBoxWrapper>
+    <h2 className="smallTitle">
+      {properties.title} ({properties.items.length})
+        </h2>
+          <ul>
+           {properties.items.map((currentItem) => {
+              return (
+            <li key={currentItem}>
+                 <a href={`/users/${currentItem}`} key={currentItem}>
+                  <img src={`https://github.com/${currentItem}.png`} />
+                    <span>{currentItem.title}</span>
+                </a>
+            </li>
+                    )
+                  })}
+          </ul>
+  </ProfileRelationsBoxWrapper>
   )
 }
 
@@ -36,6 +58,17 @@ export default function Home() {
     'lutchenca',
     'gabrielbugarelli'
   ]
+
+  const [followers, setFollowers] = React.useState([]);
+    React.useEffect(function() {
+      fetch('https://api.github.com/users/renantoka/followers')
+        .then(function (serverResponse) {
+          return serverResponse.json();
+        })
+        .then(function(fullResponse) {
+          setFollowers(fullResponse);
+        })
+}, []);
 
   return (
     <>
@@ -92,17 +125,18 @@ export default function Home() {
           </Box>
         </div>
         <div className="profileRelationsArea" style={{ gridArea: 'profileRelationsArea' }}>
+        <ProfileRelationsBox title="Seguidores" items={followers} />
           <ProfileRelationsBoxWrapper>
             <h2 className="smallTitle">
               Pessoas da comunidade ({favoritePeople.length})
             </h2>
             <ul>
-              {favoritePeople.map((itemAtual) => {
+              {favoritePeople.map((currentItem) => {
                 return (
-                  <li key={itemAtual}>
-                    <a href={`/users/${itemAtual}`} key={itemAtual}>
-                      <img src={`https://github.com/${itemAtual}.png`} />
-                      <span>{itemAtual}</span>
+                  <li key={currentItem}>
+                    <a href={`/users/${currentItem}`} key={currentItem}>
+                      <img src={`https://github.com/${currentItem}.png`} />
+                      <span>{currentItem}</span>
                     </a>
                   </li>
                 )
@@ -114,12 +148,12 @@ export default function Home() {
              Comunidades ({communities.length})
             </h2>
             <ul>
-              {communities.map((itemAtual) => {
+              {communities.map((currentItem) => {
                 return (
-                  <li key={itemAtual.id}>
-                    <a href={`/users/${itemAtual.title}`}>
-                      <img src={itemAtual.image} />
-                      <span>{itemAtual.title}</span>
+                  <li key={currentItem.id}>
+                    <a href={`/users/${currentItem.title}`}>
+                      <img src={currentItem.image} />
+                      <span>{currentItem.title}</span>
                     </a>
                   </li>
                 )
