@@ -68,7 +68,32 @@ export default function Home() {
         .then(function(fullResponse) {
           setFollowers(fullResponse);
         })
-}, []);
+
+        fetch('https://graphql.datocms.com/', {
+          method: 'POST',
+          headers: {
+            'Authorization': 'faa0cbb4d49ff87734c2ea82051631',
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify({ "query": `query {
+            allCommunities {
+              id
+              title
+              _status
+              _firstPublishedAt
+            }
+          }`
+
+          })
+        })
+        .then((fullResponse) => {
+          const communitiesDato = fullResponse.data.allCommunities
+          setCommunities(communitiesDato)
+        }
+
+
+, []);
 
   return (
     <>
@@ -152,7 +177,7 @@ export default function Home() {
                 return (
                   <li key={currentItem.id}>
                     <a href={`/users/${currentItem.title}`}>
-                      <img src={currentItem.image} />
+                      <img src={currentItem.imageUrl} />
                       <span>{currentItem.title}</span>
                     </a>
                   </li>
